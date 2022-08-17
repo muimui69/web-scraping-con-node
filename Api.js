@@ -1,9 +1,6 @@
-// forma backend = usamos require  y en funciones aumentamos al inicio "async"
-// forma tradicional = usamos import
-
-//const puppeteer = require('puppeteer');
 import puppeteer from 'puppeteer';
 
+/* vectores auxiliares */
 let extractSis = [];
 let extractInf = [];
 let extractRed = [];
@@ -88,8 +85,3 @@ export default{
   ingenieraRedes  //187 -5
 }
 
-/*module.exports = { 
-  ingenieraInformatica,
-  ingenieraSistemas,
-  ingenieraRedes
-};*/
