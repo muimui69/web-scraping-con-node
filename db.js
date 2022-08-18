@@ -3,9 +3,9 @@ import {Lista} from './listas/Lista.js';
 
 //const DataSistemas = await Api.ingenieraSistemas();
 //const DataInformatica = await Api.ingenieraInformatica();
-const DataRedes = await Api.ingenieraRedes();
+//const DataRedes = await Api.ingenieraRedes();
+let DataInformatica;
 
-/* vector de siglas */
 let siglaSistemas = ['MAT101','INF110','INF119','FIS100','LIN100',
                     'MAT102','INF120','MAT103','FIS102','LIN101',
                     'MAT207','INF210','INF211','FIS200','ADM100',
@@ -49,6 +49,8 @@ let sis = [];
 let red = [];
 
 /* vetor que unifica las 3 carreras */
+let grupo = [];
+let sigla =[];
 let alldate = [];
 
 async function setDataSistemas(Sistemas){
@@ -80,6 +82,10 @@ async function setDataInformatica(Informatica){
     }
 }
 
+async function getDataInformatica(){
+    return inf;
+}
+
 async function setDataRedes(Redes){
     let salva = Redes;
     let j = 0;
@@ -95,7 +101,6 @@ async function setDataRedes(Redes){
 }
 
 
-/* METODOS AUXILIARES */
 function pos (texto,cadena){
     let s = "";
     for(let i = 0;i<texto.length ;i++){
@@ -116,20 +121,28 @@ function posVector(texto,vectorSigla){
     return false;
 }
 
-
+async function confirm(respuesta){  ///
+    if(respuesta===true){
+        DataInformatica =  await Api.ingenieraInformatica();
+        setDataInformatica(DataInformatica);
+    }
+}
 
 function GruposSistemas(){
-    console.log("******************************************************");
     for (let j = 0;j<5;j++){
         for(let i = 0;i<sis.length ;i++){
             if(pos(sis[i],siglaSistemas[j])){
-                console.log("----------------------------------------------------");
-                console.log(sis[i]);
-                for(let k=i+1;k<sis.length-1;k++){
+                sigla[j] = new Lista();
+                sigla[j].add(siglaSistemas[j]);
+                grupo[j] =  new Lista();
+                for(let k=i + 1;k<sis.length-1;k++){
                     if(!posVector(sis[k],siglaSistemas)){
-                        console.log(sis[k]);
+                        if(pos(sis[k],"GRUPO")){
+                            grupo[j].add(sis[k]);
+                        }
                     }else break;
                 }
+                console.log(sigla[j] +  "--->" + grupo[j].toString());
                 break;
             }
         }
@@ -138,39 +151,36 @@ function GruposSistemas(){
 
 
 function GruposInformatica(){
-    console.log("******************************************************");
     for (let j = 0;j<5;j++){
         for(let i = 0;i<inf.length ;i++){
             if(pos(inf[i],siglaInformatica[j])){
-                console.log("----------------------------------------------------");
-                console.log(inf[i]);
-                for(let k=i+1;k<inf.length-1;k++){
+                sigla[j] = new Lista();
+                sigla[j].add(siglaInformatica[j]);
+                grupo[j] =  new Lista();
+                for(let k=i + 1;k<inf.length - 1;k++){
                     if(!posVector(inf[k],siglaInformatica)){
-                        console.log(inf[k]);
+                        if(pos(inf[k],"GRUPO")){
+                            grupo[j].add(inf[k]);
+                        }
                     }else break;
                 }
+                console.log(sigla[j] +  "--->" + grupo[j].toString());
                 break;
             }
         }
     }
 }
 
+
 function GruposRedes(){
-    console.log("******************************************************");
-    let grupo = [];
-    let sigla =[];
-    let s = "";
     for (let j = 0;j<5;j++){
         for(let i = 0;i<red.length ;i++){
             if(pos(red[i],siglaRedes[j])){
-                console.log("----------------------------------------------------");
-                //console.log(red[i]);
                 sigla[j] = new Lista();
                 sigla[j].add(siglaRedes[j]);
                 grupo[j] =  new Lista();
-                for(let k=i+1;k<red.length-1;k++){
+                for(let k=i + 1;k<red.length - 1;k++){
                     if( (!posVector(red[k],siglaRedes))){ 
-                        //console.log(red[k]);
                         if(pos(red[k],"GRUPO")){
                             grupo[j].add(red[k]);
                         }
@@ -184,5 +194,28 @@ function GruposRedes(){
 }
 
 
-setDataRedes(DataRedes);
-GruposRedes();
+function runAllDate(){
+    setDataInformatica(DataInformatica);
+    setDataSistemas(DataSistemas);
+    setDataRedes(DataRedes);
+    for (let j = 0;j<5;j++){
+        for(let i = 0;i<red.length ;i++){
+            if(pos(red[i],siglaRedes[j])){
+                sigla[j] = new Lista();
+                sigla[j].add(siglaRedes[j]);
+                grupo[j] =  new Lista();
+                for(let k=i + 1;k<red.length - 1;k++){
+                    if( (!posVector(red[k],siglaRedes))){ 
+                        if(pos(red[k],"GRUPO")){
+                            grupo[j].add(red[k]);
+                        }
+                    }else break;
+                }
+                console.log(sigla[j] +  "--->" + grupo[j].toString());
+                break;
+            }
+        }
+    }
+}
+
+export default{getDataInformatica,confirm};
