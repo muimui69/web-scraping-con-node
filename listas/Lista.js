@@ -6,10 +6,6 @@ export class Lista{
         this.n = 0;
     }
     
-    isVacia(){
-        return (this.L===null);
-    }
-    
     add(dato){ 
         let Ant = null;
         let p = this.L;
@@ -31,6 +27,18 @@ export class Lista{
             this.n++;
         }
     }
+
+    exist(dato){
+        let p = this.L;
+        while (p !== null){
+            if(p.getData===dato){
+                return true;
+            }
+            p = p.getLink();
+        }
+       return false;
+    }
+
 
     toString(){ 
         let S = "[";

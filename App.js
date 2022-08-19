@@ -16,7 +16,29 @@ function print_logo(){
     return ascci;
 }   
 
-const opciones = [
+function print_waringMessage(){
+    const message =
+    `
+    ${'Todos los derechos reservados wido corporation(r) \n'.yellow}
+    ${'Advertencia:'.red} 
+    ${'El presente trabajo,no tiene relacion alguna con ningun partido politico,es un proyeto personal,por favor si es usted de un partido politico abstenganse de decir huevadas,gracias.\n'.green}
+    `
+    return message;
+}
+
+console.log(print_logo().cyan);
+console.log(print_waringMessage());
+
+const spinner = ora('cargando aplicacion...\n').start();
+Api.OnApi();
+const Informatica = await Api.getDataInformatica();
+
+setTimeout(() => {
+	spinner.color = 'yellow';
+	spinner.succeed('Aplicacion lista.');
+    spinner.stop();
+    console.log(Informatica);
+    /*inquirer.prompt([
     {
         type:'list',
         name:'opciones',
@@ -38,29 +60,29 @@ const opciones = [
                 key:'3'
             }
         ]
-    }
-];
-
-function print_waringMessage(){
-    const message =
-    `
-    ${'Todos los derechos reservados wido corporation(r) \n'.yellow}
-    ${'Advertencia:'.red} 
-    ${'El presente trabajo,no tiene relacion alguna con ningun partido politico,es un proyeto personal,por favor si es usted de un partido politico abstenganse de decir huevadas,gracias.\n'.green}
-    `
-    return message;
-}
-
-console.log(print_logo().cyan);
-console.log(print_waringMessage());
-Api.confirm(true);
-
-const spinner = ora('cargando aplicacion...\n').start();
-setTimeout(() => {
-	spinner.color = 'yellow';
-	spinner.succeed('Aplicacion lista.');
-    spinner.stop();
-    //inquirer.prompt(opciones);
+    },
+    {
+        type:'input',
+        name:'SIGLA',
+        message:'Por favor introduce la sigla de la materia en la que estas interesado.',
+    },
+    {    
+        type:'input',
+        name:'GRUPO',
+        message:'Por favor introduce el grupo de la materia indicada.',
+    },
+    {
+        type:'checkbox',
+        name:'extra',
+        message:'que desea?',
+        choices :[
+            'Mostrar todas las materias con cupo y sin cupo.',
+            'Mostrar solo las materias sin cupo.',
+            'Mostrar las materias sin cupo.'
+        ]
+    }]).then((entry) => {
+        console.log(entry);        
+    });*/
 },27000);
 
 
