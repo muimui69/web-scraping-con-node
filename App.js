@@ -38,7 +38,7 @@ setTimeout(() => {
 	spinner.succeed('Aplicacion lista.');
     spinner.stop();
     console.log(Informatica);
-    /*inquirer.prompt([
+    inquirer.prompt([
     {
         type:'list',
         name:'opciones',
@@ -80,9 +80,7 @@ setTimeout(() => {
             'Mostrar solo las materias sin cupo.',
             'Mostrar las materias sin cupo.'
         ]
-    }]).then((entry) => {
-        console.log(entry);        
-    });*/
+    }])
 },27000);
 
 

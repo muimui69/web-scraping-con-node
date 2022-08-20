@@ -1,5 +1,4 @@
 import { Nodo } from "./Nodo.js";
-
 export class Lista{
     constructor(){
         this.L = null;

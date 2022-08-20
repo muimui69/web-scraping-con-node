@@ -1,10 +1,13 @@
 import Api from './Api.js';
 import {Lista} from './listas/Lista.js';
 
-const DataSistemas = await Api.ingenieraSistemas();
-const DataInformatica = await Api.ingenieraInformatica();
-const DataRedes = await Api.ingenieraRedes();
-//let DataInformatica;
+//const DataSistemas = await Api.ingenieraSistemas();
+//const DataInformatica = await Api.ingenieraInformatica();
+//const DataRedes = await Api.ingenieraRedes();
+let DataInformatica;
+let DataSistemas;
+let DataRedes; 
+
 
 let siglaSistemas = ['MAT101','INF110','INF119','FIS100','LIN100',
                     'MAT102','INF120','MAT103','FIS102','LIN101',
@@ -50,7 +53,6 @@ let red = [];
 
 /* vetor que unifica las 3 carreras */
 let grupo = [];
-let sigla =[];
 
 /* fase casi final */
 let allsiglas = [];
@@ -60,15 +62,13 @@ let marca = [];
 
 async function setDataSistemas(Sistemas){
     let salva = Sistemas;
-    let j = alldate.length + 1;
     for(let i = 0;i<salva.length ;i++){
         let cad = salva[i];
         cad = cad.trim();
         if  (cad.length != 0){
             //sis[j] = cad;
             //console.log(sis[j]);
-            alldate[j] = cad;
-            j++;
+            alldate.push(cad);
         }
     }
 }
@@ -76,15 +76,13 @@ async function setDataSistemas(Sistemas){
 
 async function setDataInformatica(Informatica){
     let salva = Informatica;
-    let j = alldate.length;
     for(let i = 0;i<salva.length ;i++){
         let cad = salva[i];
         cad = cad.trim();
         if  (cad.length != 0){
             //inf[j] = cad;
             //console.log(inf[j]);
-            alldate[j] = cad;
-            j++;
+            alldate.push(cad);
         }
     }
 }
@@ -99,23 +97,21 @@ async function getDataInformatica(){
 
 async function setDataRedes(Redes){
     let salva = Redes;
-    let j = alldate.length + 1;
     for(let i = 0;i<salva.length ;i++){
         let cad = salva[i];
         cad = cad.trim();
         if  (cad.length != 0){
             //red[j] = cad;
             //console.log(red[j]);
-            alldate[j] = cad;
-            j++;
+            alldate.push(cad);
         }
     }
 }
 
 
-function pos (texto,cadena){
+function pos(texto,cadena){
     let s = "";
-    for(let i = 0;i<texto.length ;i++){
+    for(let i = 0;i<texto.length;i++){
         s+=texto[i];
         if(s.toLocaleUpperCase()===cadena.toLocaleUpperCase()){
             return true;
@@ -134,8 +130,12 @@ function posVector(texto,vectorSigla){
 }
 
 async function OnApi(){
-    DataInformatica =  await Api.ingenieraInformatica();
-    setDataInformatica(DataInformatica);
+    DataInformatica = await Api.ingenieraInformatica();
+    setDataInformatica(DataInformatica)
+    DataSistemas = await Api.ingenieraSistemas();
+    setDataSistemas(DataSistemas);
+    DataRedes = await Api.ingenieraRedes();
+    setDataRedes(DataRedes);
 }
 
 function GruposSistemas(){
@@ -232,13 +232,13 @@ function unirTodasSiglas(){
     allsiglas[i]=siglaSistemas[i];
    }
   g = i;
-  for(j =1 ; j<siglaRedes.length;j++){
+  for(j =0 ; j<siglaRedes.length;j++){
     allsiglas[g]=siglaRedes[j];
     g++;   
   }
 
   g = j;
-  for( k =1 ;k<siglaInformatica.length;k++){
+  for( k =0 ;k<siglaInformatica.length;k++){
     allsiglas[g]=siglaInformatica[k];
     g++;   
   }
@@ -247,12 +247,11 @@ function unirTodasSiglas(){
   for(let u = 0;u<allsiglas.length;u++){
     if(!existeInVector(allsiglasOrigimal,allsiglas[u])){
         allsiglasOrigimal[ac]=allsiglas[u];
-        //console.log(allsiglasOrigimal[ac]);
+        console.log(allsiglasOrigimal[ac]);
         ac++;
     }
   }
   
-  marca.length = alldate.length;
   for(let y = 0;y<alldate.length;y++){
         marca[y] = false;
   }
@@ -261,44 +260,50 @@ function unirTodasSiglas(){
 
 
 function indexOfSigla(Sigla){
-    for(let i = 0;i<alldate.length ;i++){
-        if(pos(alldate[i],Sigla)){
-            marca[i] = true;
+    for(let i = 0;i<alldate.length;i++){
+        if( (pos(alldate[i],Sigla)) && (marca[i]===false) ){
             return i;
         }
     }
     return -1;
-}
-
-async function runAllDate(){
+} 
+ 
+function runAllDate(){  //tanta hueva paq de esta maldita cosa JAJAJAJA
     setDataInformatica(DataInformatica);
     setDataSistemas(DataSistemas);
     setDataRedes(DataRedes);
     unirTodasSiglas();
-    for (let j = 0;j<5;j++){
-        for(let i = 0;i<alldate.length ;i++){
-            if(pos(alldate[i],allsiglasOrigimal[j])){
-                sigla[j] = new Lista();
-                sigla[j].add(allsiglasOrigimal[j]);
-                let res ='';
-                for(let k=i + 1;k<alldate.length - 1;k++){
-                    if( (!posVector(alldate[k],allsiglasOrigimal))){ 
-                        if(pos(alldate[k],"GRUPO")){
-                            res+=alldate[k] + '.\n';
-                        }
+    setTimeout(() =>{
+        let sigla =[];
+        for (let j = 0;j<5;j++){
+            let res ='';
+            let index = indexOfSigla(allsiglasOrigimal[j]);
+            while(index != -1){
+                index = indexOfSigla(allsiglasOrigimal[j]);
+                if(index!=-1){
+                    if(marca[index]===false){
+                        sigla[j] = new Lista();
+                        sigla[j].add(allsiglasOrigimal[j]);
+                        marca[index] = true;
+                        console.log(sigla[j].toString());
+                    }
+                    for(let k=index + 1;k<alldate.length - 1;k++){
+                        if( (!posVector(alldate[k],allsiglasOrigimal))){ 
+                            if(pos(alldate[k],"GRUPO")){
+                                res+=alldate[k] + '.\n';
+                            }
 
-                        if (pos(alldate[k],"CUPOS LIBRES")){
-                            res+='CUPOS LIBRES: ';
-                            res+=alldate[k+1] + '.\n';
-                        }
-                    }else break;
+                            if (pos(alldate[k],"CUPOS LIBRES")){
+                                res+='CUPOS LIBRES: ';
+                                res+=alldate[k+1] + '.\n';
+                            }
+                        }else break;    
+                    }   
                 }
-                console.log(sigla[j].toString());
-                console.log(res);
-                break;
             }
+            console.log(res);
         }
-    }
+    },3000)
 }
 
 function runDate(j){
@@ -335,5 +340,5 @@ function pruebaInformatica(){
 }
 
 
-await runAllDate();
-//export default{getDataInformatica,OnApi};
+//runAllDate();
+export default{OnApi};
