@@ -34,8 +34,7 @@ Api.OnApi();
 
 setTimeout(() => {
 	spinner.color = 'yellow';
-	spinner.succeed('Aplicacion lista.');
-    spinner.stop();
+	spinner.success('Aplicacion lista.');
     inquirer.prompt([
     {
         type:'input',
@@ -48,7 +47,7 @@ setTimeout(() => {
         message:'Por favor introduce el grupo de la materia. (Si estas interesado en un grupo o cierta cantidad de grupos ponglos asi ej. -G Z2 SS SF ...) o (Simplemnte dale enter y por defecto se mostraran todos los grupos)',
     }*/
     ]).then( ({SIGLA}) => {
-        Api.getPeticion(SIGLA);       
+       Api.getPeticion(SIGLA);       
         //console.log(SIGLA,GRUPO);
     });
 },181000); //27000 -->  81000  -->181000

@@ -1,5 +1,5 @@
 import Api from './Api.js';
-import {Lista} from './listas/Lista.js';
+import  'colors';
 
 let DataInformatica;
 let DataSistemas;
@@ -153,8 +153,6 @@ async function setDataRedes(Redes){
         let cad = salva[i];
         cad = cad.trim();
         if  (cad.length != 0){
-            //red[j] = cad;
-            //console.log(red[j]);
             alldate.push(cad);
         }
     }
@@ -191,11 +189,16 @@ function setPeticion(peticion){
 
 function getPeticion(dato){ 
     setPeticion(dato);
+    console.log('\n');
     for(let i=0;i<recibe.length;i++){
         let res ='';
         let index = indexOfSigla(recibe[i]);
         if(index===-1){
             console.log('Error: Sigla no valida: ' + recibe[i] + '.');
+        }
+        if( index!=-1){
+            let materia = alldate[index];
+            console.log(materia.cyan + '\n');
         }
         while(index != -1){
             index = indexOfSigla(recibe[i]);
