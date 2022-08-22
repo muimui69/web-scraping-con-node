@@ -1,13 +1,14 @@
 import Api from './Api.js';
 import {Lista} from './listas/Lista.js';
 
-//const DataSistemas = await Api.ingenieraSistemas();
-//const DataInformatica = await Api.ingenieraInformatica();
-//const DataRedes = await Api.ingenieraRedes();
 let DataInformatica;
 let DataSistemas;
 let DataRedes; 
 
+let allsiglas = [];
+let allsiglasOrigimal = [];
+let alldate = [];
+let marca = [];
 
 let siglaSistemas = ['MAT101','INF110','INF119','FIS100','LIN100',
                     'MAT102','INF120','MAT103','FIS102','LIN101',
@@ -46,19 +47,81 @@ let siglaRedes = ['MAT101','INF110','INF119','FIS100','LIN100',
 ];
 
 
-/* vector de datas */
-let inf = [];
-let sis = [];
-let red = [];
+function pos(texto,cadena){
+    let s = "";
+    for(let i = 0;i<texto.length;i++){
+        s+=texto[i];
+        if(s.toLocaleUpperCase()===cadena.toLocaleUpperCase()){
+            return true;
+        }
+    }
+    return false;
+}
 
-/* vetor que unifica las 3 carreras */
-let grupo = [];
 
-/* fase casi final */
-let allsiglas = [];
-let allsiglasOrigimal = [];
-let alldate = [];
-let marca = [];
+function posVector(texto,vectorSigla){
+    for(let i = 0;i<vectorSigla.length ;i++){
+        if(pos(texto,vectorSigla[i])){
+            return true;
+        }
+    }
+    return false;
+}
+
+
+function existeInVector(vector,dato){
+    for(let i = 0; i<vector.length;i++){
+        if (vector[i]===dato){
+            return true;
+        }
+    }
+    return false;
+}
+
+
+function indexOfSigla(Sigla){
+    for(let i = 0;i<alldate.length;i++){
+        if( (pos(alldate[i],Sigla)) && (marca[i]===false) ){
+            return i;
+        }
+    }
+    return -1;
+} 
+
+
+function unirTodasSiglas(){
+    let g;
+    let i;
+    let j;
+    let k;
+    for(i = 0;i<siglaSistemas.length;i++){
+     allsiglas[i]=siglaSistemas[i];
+    }
+   g = i;
+   for(j =0 ; j<siglaRedes.length;j++){
+     allsiglas[g]=siglaRedes[j];
+     g++;   
+   }
+ 
+   g = j;
+   for( k =0 ;k<siglaInformatica.length;k++){
+     allsiglas[g]=siglaInformatica[k];
+     g++;   
+   }
+ 
+   let ac = 0;
+   for(let u = 0;u<allsiglas.length;u++){
+     if(!existeInVector(allsiglasOrigimal,allsiglas[u])){
+         allsiglasOrigimal[ac]=allsiglas[u];
+         ac++;
+     }
+   }
+   
+   for(let y = 0;y<alldate.length;y++){
+         marca[y] = false;
+   }
+}
+ 
 
 async function setDataSistemas(Sistemas){
     let salva = Sistemas;
@@ -66,8 +129,6 @@ async function setDataSistemas(Sistemas){
         let cad = salva[i];
         cad = cad.trim();
         if  (cad.length != 0){
-            //sis[j] = cad;
-            //console.log(sis[j]);
             alldate.push(cad);
         }
     }
@@ -80,20 +141,11 @@ async function setDataInformatica(Informatica){
         let cad = salva[i];
         cad = cad.trim();
         if  (cad.length != 0){
-            //inf[j] = cad;
-            //console.log(inf[j]);
             alldate.push(cad);
         }
     }
 }
 
-async function getDataInformatica(){
-    return new Promise((resolve) =>  {
-        setTimeout(() =>{
-          resolve(inf);
-        },54000);
-    });
-}
 
 async function setDataRedes(Redes){
     let salva = Redes;
@@ -109,236 +161,64 @@ async function setDataRedes(Redes){
 }
 
 
-function pos(texto,cadena){
-    let s = "";
-    for(let i = 0;i<texto.length;i++){
-        s+=texto[i];
-        if(s.toLocaleUpperCase()===cadena.toLocaleUpperCase()){
-            return true;
-        }
-    }
-    return false;
-}
-
-function posVector(texto,vectorSigla){
-    for(let i = 0;i<vectorSigla.length ;i++){
-        if(pos(texto,vectorSigla[i])){
-            return true;
-        }
-    }
-    return false;
-}
-
 async function OnApi(){
     DataInformatica = await Api.ingenieraInformatica();
-    setDataInformatica(DataInformatica)
     DataSistemas = await Api.ingenieraSistemas();
-    setDataSistemas(DataSistemas);
     DataRedes = await Api.ingenieraRedes();
-    setDataRedes(DataRedes);
-}
-
-function GruposSistemas(){
-    for (let j = 0;j<5;j++){
-        for(let i = 0;i<sis.length ;i++){
-            if(pos(sis[i],siglaSistemas[j])){
-                sigla[j] = new Lista();
-                sigla[j].add(siglaSistemas[j]);
-                grupo[j] =  new Lista();
-                for(let k=i + 1;k<sis.length-1;k++){
-                    if(!posVector(sis[k],siglaSistemas)){
-                        if(pos(sis[k],"GRUPO")){
-                            grupo[j].add(sis[k]);
-                        }
-                    }else break;
-                }
-                console.log(sigla[j] +  "--->" + grupo[j].toString());
-                break;
-            }
-        }
-    }
-}
-
-
-function GruposInformatica(){
-    let cupos = [];
-    for (let j = 0;j<5;j++){
-        for(let i = 0;i<inf.length ;i++){
-            if(pos(inf[i],siglaInformatica[j])){
-                sigla[j] = new Lista();
-                sigla[j].add(siglaInformatica[j]);
-                grupo[j] =  new Lista();
-                cupos[j] = new Lista();
-                for(let k=i + 1;k<inf.length - 1;k++){
-                    if(!posVector(inf[k],siglaInformatica)){
-                        if(pos(inf[k],"GRUPO")){
-                            grupo[j].add(inf[k]);
-                        }
-                        if (pos(inf[k],"CUPOS LIBRES")){
-                            cupos[j].add(inf[k+1]);
-                        }
-                    }else break;
-                }
-                console.log(sigla[j].toString());
-                console.log(grupo[j].toString());
-                console.log(cupos[j].toString());
-                break;
-            }
-        }
-    }
-}
-
-
-function GruposRedes(){
-    for (let j = 0;j<5;j++){
-        for(let i = 0;i<red.length ;i++){
-            if(pos(red[i],siglaRedes[j])){
-                sigla[j] = new Lista();
-                sigla[j].add(siglaRedes[j]);
-                grupo[j] =  new Lista();
-                for(let k=i + 1;k<red.length - 1;k++){
-                    if( (!posVector(red[k],siglaRedes))){ 
-                        if(pos(red[k],"GRUPO")){
-                            grupo[j].add(red[k]);
-                        }
-                    }else break;
-                }
-                console.log(sigla[j] +  "--->" + grupo[j].toString());
-                break;
-            }
-        }
-    }
-}
-
-
-
-function existeInVector(vector,dato){
-    for(let i = 0; i<vector.length;i++){
-        if (vector[i]===dato){
-            return true;
-        }
-    }
-    return false;
-}
-
-
-
-function unirTodasSiglas(){
-   let g;
-   let i;
-   let j;
-   let k;
-   for(i = 0;i<siglaSistemas.length;i++){
-    allsiglas[i]=siglaSistemas[i];
-   }
-  g = i;
-  for(j =0 ; j<siglaRedes.length;j++){
-    allsiglas[g]=siglaRedes[j];
-    g++;   
-  }
-
-  g = j;
-  for( k =0 ;k<siglaInformatica.length;k++){
-    allsiglas[g]=siglaInformatica[k];
-    g++;   
-  }
-
-  let ac = 0;
-  for(let u = 0;u<allsiglas.length;u++){
-    if(!existeInVector(allsiglasOrigimal,allsiglas[u])){
-        allsiglasOrigimal[ac]=allsiglas[u];
-        console.log(allsiglasOrigimal[ac]);
-        ac++;
-    }
-  }
-  
-  for(let y = 0;y<alldate.length;y++){
-        marca[y] = false;
-  }
-}
-
-
-
-function indexOfSigla(Sigla){
-    for(let i = 0;i<alldate.length;i++){
-        if( (pos(alldate[i],Sigla)) && (marca[i]===false) ){
-            return i;
-        }
-    }
-    return -1;
-} 
- 
-function runAllDate(){  //tanta hueva paq de esta maldita cosa JAJAJAJA
-    setDataInformatica(DataInformatica);
+    setDataInformatica(DataInformatica)
     setDataSistemas(DataSistemas);
     setDataRedes(DataRedes);
     unirTodasSiglas();
-    setTimeout(() =>{
-        let sigla =[];
-        for (let j = 0;j<5;j++){
-            let res ='';
-            let index = indexOfSigla(allsiglasOrigimal[j]);
-            while(index != -1){
-                index = indexOfSigla(allsiglasOrigimal[j]);
-                if(index!=-1){
-                    if(marca[index]===false){
-                        sigla[j] = new Lista();
-                        sigla[j].add(allsiglasOrigimal[j]);
-                        marca[index] = true;
-                        console.log(sigla[j].toString());
-                    }
-                    for(let k=index + 1;k<alldate.length - 1;k++){
-                        if( (!posVector(alldate[k],allsiglasOrigimal))){ 
-                            if(pos(alldate[k],"GRUPO")){
-                                res+=alldate[k] + '.\n';
-                            }
-
-                            if (pos(alldate[k],"CUPOS LIBRES")){
-                                res+='CUPOS LIBRES: ';
-                                res+=alldate[k+1] + '.\n';
-                            }
-                        }else break;    
-                    }   
-                }
-            }
-            console.log(res);
-        }
-    },3000)
 }
 
-function runDate(j){
-    if(j<5){
-        runDate(j + 1);
+
+/* -------------------  funciones usuario ---------------- */
+let recibe = [];
+function setPeticion(peticion){
+    peticion = peticion.trim();
+    if(peticion.length===0){
+        console.log('Por favor ingrese de nuevo.');
+        return;
+    }else{
+        peticion = peticion.split(' ');
+        for(let i = 0;i<peticion.length;i++){
+            if(peticion[i].length!=0){
+                recibe.push(peticion[i]);
+            }
+        }
     }
 }
 
-
-function pruebaInformatica(){
-    let res ='';
-    for (let j = 0;j<5;j++){
-        for(let i = 0;i<inf.length ;i++){
-            if(pos(inf[i],siglaInformatica[j])){
-                sigla[j] = new Lista();
-                sigla[j].add(siglaInformatica[j]);
-                for(let k=i + 1;k<inf.length - 1;k++){
-                    if(!posVector(inf[k],siglaInformatica)){
-                        if(pos(inf[k],"GRUPO")){
-                            res+=inf[k] + '.\n';
+function getPeticion(dato){ 
+    setPeticion(dato);
+    for(let i=0;i<recibe.length;i++){
+        let res ='';
+        let index = indexOfSigla(recibe[i]);
+        if(index===-1){
+            console.log('Error: Sigla no valida: ' + recibe[i] + '.');
+        }
+        while(index != -1){
+            index = indexOfSigla(recibe[i]);
+            if(index!=-1){
+                if(marca[index]===false){
+                    marca[index] = true;
+                }
+                for(let k=index + 1;k<alldate.length - 1;k++){
+                    if( (!posVector(alldate[k],allsiglasOrigimal))){ 
+                        if(pos(alldate[k],"GRUPO")){
+                            res+=alldate[k] + '.\n';
                         }
-                        if (pos(inf[k],"CUPOS LIBRES")){
+
+                        if (pos(alldate[k],"CUPOS LIBRES")){
                             res+='CUPOS LIBRES: ';
-                            res+=inf[k+1] + '.\n';
+                            res+=alldate[k+1] + '.\n';
                         }
-                    }else break;
-                }
-                console.log(sigla[j].toString());
-                console.log(res);
-                break;
+                    }else break;    
+                }   
             }
         }
+        console.log(res);
     }
 }
 
-
-//runAllDate();
-export default{OnApi};
+export default{OnApi,getPeticion};

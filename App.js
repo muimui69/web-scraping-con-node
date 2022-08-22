@@ -1,7 +1,7 @@
 import inquirer from 'inquirer';
 import  'colors';
-import ora from 'ora';
-import Api from './db.js'
+import Api from './db.js';
+import {createSpinner} from 'nanospinner';
 
 function print_logo(){
     const ascci = '\n'+
@@ -29,58 +29,28 @@ function print_waringMessage(){
 console.log(print_logo().cyan);
 console.log(print_waringMessage());
 
-const spinner = ora('cargando aplicacion...\n').start();
+const spinner = createSpinner('cargando aplicacion...\n').start();
 Api.OnApi();
-const Informatica = await Api.getDataInformatica();
 
 setTimeout(() => {
 	spinner.color = 'yellow';
 	spinner.succeed('Aplicacion lista.');
     spinner.stop();
-    console.log(Informatica);
     inquirer.prompt([
-    {
-        type:'list',
-        name:'opciones',
-        message:'A que carrera perteneces?',
-        choices : [
-            {
-                value:'187-3',
-                name:`1 Ingenieria Informatica.`,
-                key:'1'
-            },
-            {
-                value:'187-4',
-                name:`2 Ingenieria en Sistemas.`,
-                key:'2'
-            },
-            {
-                value:'187-5',
-                name:`3 Ingenieria en Redes.`,
-                key:'3'
-            }
-        ]
-    },
     {
         type:'input',
         name:'SIGLA',
-        message:'Por favor introduce la sigla de la materia en la que estas interesado.',
-    },
-    {    
+        message:'Por favor introduce la sigla(s) de la materia en la que estas interesado.(Introducela con -S separadas por un espacio ej. -S INF110 MAT101 ... )',
+    }
+    /*{
         type:'input',
         name:'GRUPO',
-        message:'Por favor introduce el grupo de la materia indicada.',
-    },
-    {
-        type:'checkbox',
-        name:'extra',
-        message:'que desea?',
-        choices :[
-            'Mostrar todas las materias con cupo y sin cupo.',
-            'Mostrar solo las materias sin cupo.',
-            'Mostrar las materias sin cupo.'
-        ]
-    }])
-},27000);
+        message:'Por favor introduce el grupo de la materia. (Si estas interesado en un grupo o cierta cantidad de grupos ponglos asi ej. -G Z2 SS SF ...) o (Simplemnte dale enter y por defecto se mostraran todos los grupos)',
+    }*/
+    ]).then( ({SIGLA}) => {
+        Api.getPeticion(SIGLA);       
+        //console.log(SIGLA,GRUPO);
+    });
+},181000); //27000 -->  81000  -->181000
 
 
